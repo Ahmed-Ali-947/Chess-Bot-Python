@@ -1,0 +1,161 @@
+# ♟️ Chess AI with Alpha-Beta Pruning
+
+A fully playable chess game featuring a graphical interface and an AI opponent powered by the **Minimax algorithm with Alpha-Beta pruning**. You play as White; the AI plays as Black.
+
+---
+
+## 📋 Table of Contents
+
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Running the Game](#running-the-game)
+- [How to Play](#how-to-play)
+- [AI Configuration](#ai-configuration)
+- [Project Structure](#project-structure)
+- [Algorithm Overview](#algorithm-overview)
+
+---
+
+## ✨ Features
+
+- Graphical chessboard rendered with Tkinter (Unicode pieces)
+- AI opponent using Minimax + Alpha-Beta pruning + Transposition Table
+- MVV-LVA move ordering for efficient pruning
+- Piece-square tables for positional evaluation
+- Adjustable AI difficulty (depth 2–5)
+- Legal move highlighting, check detection, and last-move indicators
+- Pawn promotion dialog
+- Move history in Standard Algebraic Notation (SAN)
+- Live position evaluation display
+- Undo moves, flip board, and keyboard shortcuts
+
+---
+
+## 🖥️ Requirements
+
+- **Python 3.7+**
+- **python-chess** library
+- **Tkinter** (bundled with most Python installations)
+
+---
+
+## 📦 Installation
+
+### 1. Clone or Download the Project
+
+```bash
+git clone https://github.com/Ahmed-Ali-947/Chess-Bot-Python
+cd chess-ai
+```
+
+Or simply download and extract the project ZIP, then open a terminal in that folder.
+
+### 2. Install Dependencies
+
+```bash
+pip install chess
+```
+
+> **Note:** Tkinter comes pre-installed with standard Python distributions. If it is missing (common on some Linux systems), install it with:
+> ```bash
+> sudo apt-get install python3-tk   # Ubuntu/Debian
+> sudo dnf install python3-tkinter  # Fedora
+> ```
+
+### 3. Verify Your Python Version
+
+```bash
+python --version
+# or
+python3 --version
+```
+
+Make sure the output shows **Python 3.7 or higher**.
+
+---
+
+## ▶️ Running the Game
+
+### Graphical Interface (Recommended)
+
+```bash
+python chess_gui.py
+```
+
+The game window (1000 × 700 px) will open with the board set up and ready to play.
+
+### Terminal / Command-Line Mode
+
+```bash
+python Chessbot.py
+```
+
+In terminal mode, enter moves in **UCI format** (e.g., `e2e4`, `g1f3`). The AI responds after each of your moves.
+
+---
+
+## 🎮 How to Play
+
+| Action | How |
+|---|---|
+| Select a piece | Left-click it (highlights yellow) |
+| See legal moves | Green circles appear automatically |
+| Move a piece | Click a highlighted destination square |
+| Pawn promotion | A dialog appears — choose Queen, Rook, Bishop, or Knight |
+| Undo last move | Click **Undo Move** or press `Ctrl+Z` |
+| New game | Click **New Game** or press `Ctrl+N` |
+| Flip the board | Click **Flip Board** |
+| Force AI move | Click **AI Move** |
+| Show help | Press `F1` |
+
+---
+
+## ⚙️ AI Configuration
+
+AI strength is controlled by **search depth**. Change it via the **AI → Difficulty** menu or the toolbar.
+
+| Level | Depth | Approx. Speed |
+|---|---|---|
+| Easy | 2 | ~0.1 s/move |
+| Medium | 3 | ~0.5 s/move |
+| Hard | 4 | ~2–5 s/move |
+| Expert | 5 | Several seconds/move |
+
+The default depth is set by `SEARCH_DEPTH = 3` in `Chessbot.py`. You can change this value directly in the file for a persistent default.
+
+---
+
+## 📁 Project Structure
+
+```
+chess-ai/
+├── Chessbot.py        # AI engine — Minimax, evaluation, move ordering
+├── chess_gui.py       # Graphical interface — Tkinter board and controls
+└── README.md          # This file
+```
+
+---
+
+## 🧠 Algorithm Overview
+
+| Component | Description |
+|---|---|
+| **Minimax** | Recursive search; White maximizes, Black minimizes |
+| **Alpha-Beta Pruning** | Skips branches that cannot affect the outcome; reduces nodes from O(b^d) to O(b^(d/2)) |
+| **Transposition Table** | Caches positions by FEN string to avoid re-evaluating repeated states |
+| **MVV-LVA Move Ordering** | Prioritizes captures of high-value pieces by low-value attackers for better pruning |
+| **Piece-Square Tables** | O(1) positional bonuses for all six piece types; Black uses a vertically mirrored index |
+| **Static Evaluation** | Material value + positional bonus; returns ±∞ for checkmate, 0 for draws |
+
+---
+
+## 👥 Authors
+
+| Name | Roll No |
+|---|---|
+| Azfaar Salahuddin | 23i-3055 |
+| Ahmed Ali | 23i-3054 |
+| Haseeb Sajjad | 23i-3074 |
+
+*AI2002: Artificial Intelligence — Assignment 3*

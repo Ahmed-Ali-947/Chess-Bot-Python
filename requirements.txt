@@ -1,0 +1,12 @@
+# Chess AI with Alpha-Beta Pruning
+# Python 3.7+ required
+# Install all dependencies with: pip install -r requirements.txt
+
+# Core chess logic and rules engine
+chess==1.10.0
+
+# Tkinter is part of the Python standard library.
+# If missing on Linux, install via your package manager:
+#   Ubuntu/Debian:  sudo apt-get install python3-tk
+#   Fedora:         sudo dnf install python3-tkinter
+#   Arch:           sudo pacman -S tk

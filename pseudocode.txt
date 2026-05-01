@@ -1,0 +1,146 @@
+FUNCTION Minimax(board, depth, alpha, beta, isMaximizing) → score
+  // Terminal conditions
+  IF depth = 0 OR board.isGameOver() THEN
+      RETURN Evaluate(board)
+  END IF
+
+
+  // Transposition Table look-up
+  key ← board.FEN()
+  IF key ∈ TranspositionTable THEN
+      (storedDepth, storedScore) ← TranspositionTable[key]
+      IF storedDepth ≥ depth THEN
+          RETURN storedScore
+      END IF
+  END IF
+
+
+  orderedMoves ← OrderMoves(board)
+
+
+  IF isMaximizing THEN          // White's turn
+      bestScore ← -∞
+      FOR EACH move IN orderedMoves DO
+          board.push(move)
+          score ← Minimax(board, depth-1, alpha, beta, FALSE)
+          board.pop()
+          bestScore ← max(bestScore, score)
+          alpha ← max(alpha, bestScore)
+          IF beta ≤ alpha THEN BREAK  // β-cutoff (prune)
+      END FOR
+  ELSE                           // Black's turn
+      bestScore ← +∞
+      FOR EACH move IN orderedMoves DO
+          board.push(move)
+          score ← Minimax(board, depth-1, alpha, beta, TRUE)
+          board.pop()
+          bestScore ← min(bestScore, score)
+          beta ← min(beta, bestScore)
+          IF beta ≤ alpha THEN BREAK  // α-cutoff (prune)
+      END FOR
+  END IF
+
+
+  TranspositionTable[key] ← (depth, bestScore)
+  RETURN bestScore
+END FUNCTION
+
+FUNCTION FindBestMove(board) → move
+  bestMove  ← NULL
+  bestEval  ← +∞          // Black minimises
+  ClearTranspositionTable()
+
+
+  orderedMoves ← OrderMoves(board)
+
+
+  FOR EACH move IN orderedMoves DO
+      board.push(move)
+      evalScore ← Minimax(board, depth-1, -∞, +∞, TRUE)
+      board.pop()
+      IF evalScore < bestEval THEN
+          bestEval ← evalScore
+          bestMove ← move
+      END IF
+  END FOR
+
+
+  RETURN bestMove
+END FUNCTION
+
+FUNCTION Evaluate(board) → score
+  // Immediate terminal checks
+  IF board.isCheckmate() THEN
+      RETURN -∞  if White to move, else +∞
+  IF board.isStalemate() OR board.isInsufficientMaterial() THEN
+      RETURN 0
+  END IF
+
+
+  score ← 0
+
+
+  FOR EACH square IN board.allSquares DO
+      piece ← board.pieceAt(square)
+      IF piece = NULL THEN CONTINUE
+
+
+      materialValue  ← PIECE_VALUES[piece.type]
+      tableIndex     ← square  (White) OR mirror(square)  (Black)
+      positionalValue← PIECE_SQUARE_TABLE[piece.type][tableIndex]
+
+
+      IF piece.color = WHITE THEN
+          score ← score + materialValue + positionalValue
+      ELSE
+          score ← score - (materialValue + positionalValue)
+      END IF
+  END FOR
+
+
+  RETURN score          // centipawns
+END FUNCTION
+
+
+FUNCTION ScoreMove(board, move) → integer
+  IF board.isCapture(move) THEN
+      victim   ← board.pieceAt(move.toSquare)
+      attacker ← board.pieceAt(move.fromSquare)
+      IF victim = NULL THEN  // en passant
+          RETURN 1000
+      END IF
+      // High victim value + low attacker value = higher priority
+      RETURN PIECE_VALUES[victim.type] × 10 - PIECE_VALUES[attacker.type]
+  END IF
+  IF move.isPromotion THEN
+      RETURN 800
+  END IF
+  RETURN 0   // quiet move
+END FUNCTION
+
+
+FUNCTION OrderMoves(board) → list of moves
+  moves ← board.legalMoves
+  SORT moves DESCENDING by ScoreMove(board, move)
+  RETURN moves
+END FUNCTION
+
+
+DATA STRUCTURE TranspositionTable:
+  Map: FEN-string → (depth: integer, score: integer)
+
+
+FUNCTION TTLookup(key, depth) → score OR ⊥
+  IF key ∈ TranspositionTable THEN
+      (storedDepth, storedScore) ← TranspositionTable[key]
+      IF storedDepth ≥ depth THEN
+          RETURN storedScore
+      END IF
+  END IF
+  RETURN ⊥  (no valid entry)
+END FUNCTION
+
+
+FUNCTION TTStore(key, depth, score)
+  TranspositionTable[key] ← (depth, score)
+END FUNCTION
